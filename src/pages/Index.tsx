@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, BookOpen, Smartphone, Watch, Package, ArrowRight, Zap, Shield, Users, Heart, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -23,12 +24,16 @@ const Index = () => {
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button variant="hero" size="lg" className="text-lg px-8 py-6">
-                Report Lost Item
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Button asChild variant="hero" size="lg" className="text-lg px-8 py-6">
+                <Link to="/report?type=lost">
+                  Report Lost Item
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6 bg-white/80 backdrop-blur">
-                Report Found Item
+              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 bg-white/80 backdrop-blur">
+                <Link to="/report?type=found">
+                  Report Found Item
+                </Link>
               </Button>
             </div>
 
@@ -201,9 +206,11 @@ const Index = () => {
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
             Join thousands of students already reuniting with their belongings.
           </p>
-          <Button variant="hero" size="lg" className="text-xl px-12 py-8">
-            Get Started Now
-            <ArrowRight className="ml-2 h-6 w-6" />
+          <Button asChild variant="hero" size="lg" className="text-xl px-12 py-8">
+            <Link to="/report?type=lost">
+              Get Started Now
+              <ArrowRight className="ml-2 h-6 w-6" />
+            </Link>
           </Button>
         </div>
       </section>
