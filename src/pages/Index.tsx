@@ -13,26 +13,26 @@ const Index = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-              Lost something? Found something?
-              <span className="block text-transparent bg-clip-text cta-gradient">
-                Let's Reunite.
+              <span className="text-transparent bg-clip-text cta-gradient">
+                Reunite
               </span>
+              {" "}with Your Lost Items
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-              AI-powered Lost & Found for your campus. Post, match, and reconnect with your stuff in seconds.
+            <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+              Report lost items or browse found ones on your campus. Our smart matching system helps you reconnect with your belongings quickly and safely.
             </p>
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Button asChild variant="hero" size="lg" className="text-lg px-8 py-6">
-                <Link to="/report?type=lost">
-                  Report Lost Item
+                <Link to="/report">
+                  Report an Item
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 bg-white/80 backdrop-blur">
-                <Link to="/report?type=found">
-                  Report Found Item
+                <Link to="/#browse">
+                  View Items
                 </Link>
               </Button>
             </div>
