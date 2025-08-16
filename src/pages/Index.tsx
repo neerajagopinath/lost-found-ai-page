@@ -17,9 +17,6 @@ const Index = () => {
                 Reunite
               </span>
               {" "}with Your Lost Items
-                Reunite
-              </span>
-              {" "}with Your Lost Items
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
               Report lost items or browse found ones on your campus. Our smart matching system helps you reconnect with your belongings quickly and safely.
