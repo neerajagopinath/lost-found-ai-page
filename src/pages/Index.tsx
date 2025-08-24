@@ -12,6 +12,15 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header with Login Button */}
+      {!isLoggedIn() && (
+        <header className="absolute top-0 right-0 z-20 p-6">
+          <Button asChild variant="outline" className="bg-white/80 backdrop-blur">
+            <Link to="/login">Login</Link>
+          </Button>
+        </header>
+      )}
+
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-32">
         <div className="hero-gradient absolute inset-0 opacity-20"></div>
