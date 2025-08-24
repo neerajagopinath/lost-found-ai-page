@@ -15,7 +15,16 @@ import { Link, useSearchParams } from "react-router-dom";
 
 export default function ReportItem() {
   const [searchParams] = useSearchParams();
-  const type = searchParams.get("type") || "lost";
+  const pathname = window.location.pathname;
+  
+  // Determine type based on route
+  let type = "lost";
+  if (pathname.includes("found") || searchParams.get("type") === "found") {
+    type = "found";
+  } else if (pathname.includes("lost") || searchParams.get("type") === "lost") {
+    type = "lost";
+  }
+  
   const isLostItem = type === "lost";
   
   const [date, setDate] = useState<Date>();

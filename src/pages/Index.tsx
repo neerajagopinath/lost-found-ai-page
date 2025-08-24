@@ -3,8 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, BookOpen, Smartphone, Watch, Package, ArrowRight, Zap, Shield, Users, Heart, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { isLoggedIn } from "@/utils/auth";
 
 const Index = () => {
+  const handleProtectedNavigation = (route: string) => {
+    return isLoggedIn() ? route : '/login';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -25,13 +30,13 @@ const Index = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Button asChild variant="hero" size="lg" className="text-lg px-8 py-6">
-                <Link to="/report?type=lost">
+                <Link to={handleProtectedNavigation("/report-lost")}>
                   Report Lost Item
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 bg-white/80 backdrop-blur">
-                <Link to="/report?type=found">
+                <Link to={handleProtectedNavigation("/report-found")}>
                   Report Found Item
                 </Link>
               </Button>
@@ -207,7 +212,7 @@ const Index = () => {
             Join thousands of students already reuniting with their belongings.
           </p>
           <Button asChild variant="hero" size="lg" className="text-xl px-12 py-8">
-            <Link to="/report?type=lost">
+            <Link to={handleProtectedNavigation("/get-started")}>
               Get Started Now
               <ArrowRight className="ml-2 h-6 w-6" />
             </Link>
