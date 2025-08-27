@@ -4,13 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, LogIn } from "lucide-react";
+import { ArrowLeft, UserPlus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Signup() {
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -21,13 +23,21 @@ export default function Login() {
     setIsLoading(true);
     setMessage(null);
 
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setMessage({ type: 'error', text: 'Passwords do not match.' });
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:5000/auth/login', {
+      const response = await fetch('http://localhost:5000/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          name: formData.name,
           email: formData.email,
           password: formData.password,
         }),
@@ -36,16 +46,14 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.token);
-        setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+        setMessage({ type: 'success', text: 'Account created successfully! Redirecting to login...' });
         
-        // Redirect to home page after a short delay
+        // Redirect to login page after a short delay
         setTimeout(() => {
-          navigate('/');
+          navigate('/login');
         }, 1500);
       } else {
-        setMessage({ type: 'error', text: data.message || 'Login failed. Please try again.' });
+        setMessage({ type: 'error', text: data.message || 'Signup failed. Please try again.' });
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Network error. Please check your connection and try again.' });
@@ -67,18 +75,18 @@ export default function Login() {
               </Link>
             </Button>
             <h1 className="text-4xl font-bold text-foreground mb-4">
-              Welcome Back
+              Join Reunite
             </h1>
             <p className="text-lg text-muted-foreground">
-              Sign in to your Reunite account
+              Create your account to start reuniting with lost items
             </p>
           </div>
 
-          {/* Login Form */}
+          {/* Signup Form */}
           <Card className="card-gradient border-0 shadow-lg">
             <CardHeader>
               <CardTitle className="text-2xl text-center">
-                Sign In
+                Create Account
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -91,6 +99,20 @@ export default function Login() {
                     </AlertDescription>
                   </Alert>
                 )}
+
+                {/* Name Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    className="rounded-lg"
+                    required
+                  />
+                </div>
 
                 {/* Email Input */}
                 <div className="space-y-2">
@@ -112,7 +134,7 @@ export default function Login() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="Create a password"
                     value={formData.password}
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                     className="rounded-lg"
@@ -120,7 +142,21 @@ export default function Login() {
                   />
                 </div>
 
-                {/* Login Button */}
+                {/* Confirm Password Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    className="rounded-lg"
+                    required
+                  />
+                </div>
+
+                {/* Signup Button */}
                 <Button
                   type="submit"
                   variant="hero"
@@ -129,11 +165,11 @@ export default function Login() {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    "Signing In..."
+                    "Creating Account..."
                   ) : (
                     <>
-                      <LogIn className="w-4 h-4 mr-2" />
-                      Sign In
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Create Account
                     </>
                   )}
                 </Button>
@@ -142,15 +178,10 @@ export default function Login() {
               {/* Additional Links */}
               <div className="mt-6 text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Don't have an account?{" "}
-                  <Link to="/signup" className="text-primary hover:underline">
-                    Sign up here
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-primary hover:underline">
+                    Sign in here
                   </Link>
-                </p>
-                <p className="text-sm">
-                  <a href="#" className="text-primary hover:underline">
-                    Forgot your password?
-                  </a>
                 </p>
               </div>
             </CardContent>

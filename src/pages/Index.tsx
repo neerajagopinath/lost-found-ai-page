@@ -15,9 +15,14 @@ const Index = () => {
       {/* Header with Login Button */}
       {!isLoggedIn() && (
         <header className="absolute top-0 right-0 z-20 p-6">
-          <Button asChild variant="outline" className="bg-white/80 backdrop-blur">
-            <Link to="/login">Login</Link>
-          </Button>
+          <div className="flex gap-3">
+            <Button asChild variant="outline" className="bg-white/80 backdrop-blur hover:bg-white/90 transition-all duration-300">
+              <Link to="/login">Login</Link>
+            </Button>
+            <Button asChild variant="hero" className="shadow-lg">
+              <Link to="/signup">Sign Up</Link>
+            </Button>
+          </div>
         </header>
       )}
 
@@ -116,92 +121,6 @@ const Index = () => {
                 <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
                 <p className="text-muted-foreground text-lg leading-relaxed">{item.description}</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Reunite Section */}
-      <section className="py-20 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">Why Reunite?</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {[
-              {
-                icon: Zap,
-                title: "AI-powered",
-                description: "Smart matching technology that understands your items visually."
-              },
-              {
-                icon: Shield,
-                title: "Safe & Anonymous", 
-                description: "Connect securely without sharing personal information until you're ready."
-              },
-              {
-                icon: Users,
-                title: "Community-driven",
-                description: "Built for students, by students. Help your campus community thrive."
-              },
-              {
-                icon: Heart,
-                title: "Free to use",
-                description: "No hidden fees, no premium plans. Just pure reuniting goodness."
-              }
-            ].map((feature, index) => (
-              <Card key={index} className="card-gradient border-0 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <CardHeader>
-                  <div className="bg-primary/10 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-                    <feature.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">What Students Say</h2>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                quote: "Found my lost laptop within 2 hours! The AI matching is incredible.",
-                name: "Sarah Chen",
-                school: "Stanford University"
-              },
-              {
-                quote: "Super easy to use and actually works. Reunited with my textbooks before finals!",
-                name: "Marcus Rodriguez", 
-                school: "UCLA"
-              },
-              {
-                quote: "Love how safe and anonymous it feels. Perfect for our campus community.",
-                name: "Emma Thompson",
-                school: "MIT"
-              }
-            ].map((testimonial, index) => (
-              <Card key={index} className="bg-white border-0 shadow-md">
-                <CardContent className="p-8">
-                  <div className="flex mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground italic mb-6 text-lg leading-relaxed">
-                    "{testimonial.quote}"
-                  </p>
-                  <div>
-                    <p className="font-semibold text-lg">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.school}</p>
-                  </div>
-                </CardContent>
-              </Card>
             ))}
           </div>
         </div>
