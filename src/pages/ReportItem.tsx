@@ -16,17 +16,16 @@ import { Link, useSearchParams } from "react-router-dom";
 export default function ReportItem() {
   const [searchParams] = useSearchParams();
   const pathname = window.location.pathname;
-  
-  // Determine type based on route
+
   let type = "lost";
   if (pathname.includes("found") || searchParams.get("type") === "found") {
     type = "found";
   } else if (pathname.includes("lost") || searchParams.get("type") === "lost") {
     type = "lost";
   }
-  
+
   const isLostItem = type === "lost";
-  
+
   const [date, setDate] = useState<Date>();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -37,7 +36,7 @@ export default function ReportItem() {
     category: "",
     location: "",
   });
-  
+
   const { toast } = useToast();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,10 +51,9 @@ export default function ReportItem() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
+
     if (!formData.itemName || !formData.description || !formData.category || !formData.location || !date) {
       toast({
         title: "Missing information",
@@ -65,13 +63,55 @@ export default function ReportItem() {
       return;
     }
 
-    // Simulate form submission
-    setIsSubmitted(true);
-    
-    toast({
-      title: "Success!",
-      description: `Your ${isLostItem ? "lost" : "found"} item has been submitted to Reunite.`,
-    });
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast({
+          title: "Not logged in",
+          description: "You must be logged in to report an item.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          itemName: formData.itemName,
+          description: formData.description,
+          category: formData.category,
+          location: formData.location,
+          date: date.toISOString(),
+          type: type,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        toast({
+          title: "Success!",
+          description: `Your ${isLostItem ? "lost" : "found"} item has been submitted.`,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to submit item.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Network Error",
+        description: "Could not connect to server. Try again later.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isSubmitted) {
@@ -86,7 +126,7 @@ export default function ReportItem() {
                   Success!
                 </h1>
                 <p className="text-muted-foreground mb-6">
-                  Your item has been submitted to Reunite – our campus Lost & Found system.
+                  Your item has been submitted to Reunite.
                 </p>
                 <div className="space-y-3">
                   <Button 
@@ -107,97 +147,65 @@ export default function ReportItem() {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-background hero-gradient">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <Button asChild variant="ghost" className="mb-4">
-              <Link to="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Link>
-            </Button>
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              Report {isLostItem ? "Lost" : "Found"} Item
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Post lost or found items from our campus so the community can help you reunite with them.
-            </p>
-          </div>
-
-          {/* Form */}
-          <Card className="card-gradient border-0 shadow-lg">
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-lg mx-auto">
+          <Card className="border-0 shadow-lg card-gradient">
             <CardHeader>
-              <CardTitle className="text-2xl text-center">
-                {isLostItem ? "What did you lose?" : "What did you find?"}
-              </CardTitle>
+              <CardTitle className="text-2xl font-bold">Report an Item</CardTitle>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/" className="flex items-center gap-1">
+                  <ArrowLeft className="w-4 h-4" />
+                  Back
+                </Link>
+              </Button>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form className="space-y-6">
                 {/* Item Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="itemName">Item Name *</Label>
-                  <Input
-                    id="itemName"
-                    placeholder="e.g., iPhone 15, Blue Notebook, Silver Ring..."
-                    value={formData.itemName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, itemName: e.target.value }))}
-                    className="rounded-lg"
-                  />
+                  <Label htmlFor="itemName">Item Name</Label>
+                  <Input id="itemName" placeholder="Enter item name" />
                 </div>
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description *</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Provide detailed description (color, brand, distinctive features, etc.)"
-                    value={formData.description}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    className="rounded-lg min-h-[100px]"
-                  />
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea id="description" placeholder="Describe the item" />
                 </div>
 
                 {/* Category */}
                 <div className="space-y-2">
-                  <Label htmlFor="category">Category *</Label>
-                  <Select onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
-                    <SelectTrigger className="rounded-lg">
-                      <SelectValue placeholder="Select a category" />
+                  <Label>Category</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="books">Books</SelectItem>
                       <SelectItem value="electronics">Electronics</SelectItem>
-                      <SelectItem value="accessories">Accessories</SelectItem>
-                      <SelectItem value="others">Others</SelectItem>
+                      <SelectItem value="clothing">Clothing</SelectItem>
+                      <SelectItem value="documents">Documents</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Location */}
                 <div className="space-y-2">
-                  <Label htmlFor="location">Location on Campus *</Label>
-                  <Input
-                    id="location"
-                    placeholder="e.g., Library, Cafeteria, Lab..."
-                    value={formData.location}
-                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                    className="rounded-lg"
-                  />
+                  <Label htmlFor="location">Location</Label>
+                  <Input id="location" placeholder="Enter location" />
                 </div>
 
                 {/* Date */}
                 <div className="space-y-2">
-                  <Label htmlFor="date">Date {isLostItem ? "Lost" : "Found"} *</Label>
+                  <Label>Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full justify-start text-left font-normal rounded-lg",
+                          "w-full justify-start text-left font-normal",
                           !date && "text-muted-foreground"
                         )}
                       >
@@ -211,7 +219,6 @@ export default function ReportItem() {
                         selected={date}
                         onSelect={setDate}
                         initialFocus
-                        className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
@@ -219,47 +226,27 @@ export default function ReportItem() {
 
                 {/* Image Upload */}
                 <div className="space-y-2">
-                  <Label htmlFor="image">Upload Image (Optional)</Label>
-                  <div className="space-y-4">
-                    <Label
-                      htmlFor="image"
-                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">
-                          Click to upload an image
-                        </p>
-                      </div>
-                      <input
-                        id="image"
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                      />
-                    </Label>
-                    
-                    {imagePreview && (
-                      <div className="mt-4">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="w-full h-48 object-cover rounded-lg"
-                        />
-                      </div>
-                    )}
+                  <Label>Upload Image</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                    />
+                    <Upload className="w-5 h-5 text-muted-foreground" />
                   </div>
+                  {imagePreview && (
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="mt-3 w-full h-48 object-cover rounded-md"
+                    />
+                  )}
                 </div>
 
                 {/* Submit Button */}
-                <Button
-                  type="submit"
-                  variant="hero"
-                  size="lg"
-                  className="w-full"
-                >
-                  Submit {isLostItem ? "Lost" : "Found"} Item
+                <Button type="submit" className="w-full">
+                  Submit
                 </Button>
               </form>
             </CardContent>
@@ -269,3 +256,4 @@ export default function ReportItem() {
     </div>
   );
 }
+

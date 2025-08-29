@@ -13,7 +13,7 @@ export default function Login() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,10 +22,10 @@ export default function Login() {
     setMessage(null);
 
     try {
-      const response = await fetch('http://localhost:5000/auth/login', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: formData.email,
@@ -36,19 +36,28 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.token);
-        setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
-        
-        // Redirect to home page after a short delay
+        // save token if backend sends it
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+        localStorage.setItem("user", JSON.stringify({ email: formData.email }));
+
+        setMessage({ type: "success", text: "Login successful! Redirecting..." });
+
         setTimeout(() => {
-          navigate('/');
+          navigate("/");
         }, 1500);
       } else {
-        setMessage({ type: 'error', text: data.message || 'Login failed. Please try again.' });
+        setMessage({
+          type: "error",
+          text: data.message || "Login failed. Please try again.",
+        });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Network error. Please check your connection and try again.' });
+      setMessage({
+        type: "error",
+        text: "Network error. Please check your connection and try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +67,6 @@ export default function Login() {
     <div className="min-h-screen bg-background hero-gradient">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto">
-          {/* Header */}
           <div className="text-center mb-8">
             <Button asChild variant="ghost" className="mb-4">
               <Link to="/">
@@ -74,25 +82,18 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Login Form */}
           <Card className="card-gradient border-0 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-2xl text-center">
-                Sign In
-              </CardTitle>
+              <CardTitle className="text-2xl text-center">Sign In</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Message Display */}
                 {message && (
-                  <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
-                    <AlertDescription>
-                      {message.text}
-                    </AlertDescription>
+                  <Alert variant={message.type === "error" ? "destructive" : "default"}>
+                    <AlertDescription>{message.text}</AlertDescription>
                   </Alert>
                 )}
 
-                {/* Email Input */}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
                   <Input
@@ -100,13 +101,12 @@ export default function Login() {
                     type="email"
                     placeholder="Enter your email"
                     value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                     className="rounded-lg"
                     required
                   />
                 </div>
 
-                {/* Password Input */}
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
@@ -114,13 +114,12 @@ export default function Login() {
                     type="password"
                     placeholder="Enter your password"
                     value={formData.password}
-                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
                     className="rounded-lg"
                     required
                   />
                 </div>
 
-                {/* Login Button */}
                 <Button
                   type="submit"
                   variant="hero"
@@ -139,10 +138,9 @@ export default function Login() {
                 </Button>
               </form>
 
-              {/* Additional Links */}
               <div className="mt-6 text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <Link to="/signup" className="text-primary hover:underline">
                     Sign up here
                   </Link>

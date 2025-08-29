@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import ReportItem from "./pages/ReportItem";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ProtectedRoute from "@/components/ProtectedRoute"; // ✅ import this
 
 const queryClient = new QueryClient();
 
@@ -19,13 +20,44 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/report" element={<ReportItem />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/get-started" element={<ReportItem />} />
-          <Route path="/report-lost" element={<ReportItem />} />
-          <Route path="/report-found" element={<ReportItem />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+          {/* ✅ Protected routes */}
+          <Route
+            path="/report"
+            element={
+              <ProtectedRoute>
+                <ReportItem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/get-started"
+            element={
+              <ProtectedRoute>
+                <ReportItem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report-lost"
+            element={
+              <ProtectedRoute>
+                <ReportItem />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report-found"
+            element={
+              <ProtectedRoute>
+                <ReportItem />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
